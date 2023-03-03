@@ -23,6 +23,7 @@ const client = new Client(process.env.TOKEN, {
         everyone: false,
         users: true,
         roles: false,
+		repliedUser: true
     },
     intents: ['guilds', 'guildMessages', 'guildMembers', 'guildEmojis', "guildMessageTyping"],
 });
