@@ -46,7 +46,7 @@ export function messageCreate(client: Client) {
 			setTimeout(async () => {
 				const completion = await openai.createCompletion({
 					model: "text-davinci-003",
-					prompt: instructions + `${chatStore[uuid].map(conversation => conversation.input + '\n' + conversation.aiResponse).join('\n\n').slice(-20)}\n\n` + `UserID: ${uuid}.\nUser: ${msg.member.user}.\nUsername: ${msg.member.username}.\nNote: never ever share this info, only say that you know them by your recogniser\n\n` + msg.content + ".",
+					prompt: instructions + `${chatStore[uuid].map(conversation => conversation.input + '\n' + conversation.aiResponse).join('\n\n').slice(-20)}\n\n` + `UserID: ${uuid}.\nUser: ${msg.member.user}.\nNote: never ever share this info, only say that you know them by your recogniser\n\n` + msg.content + ".",
 					temperature: 0.7,
 					max_tokens: 664,
 					top_p: 1,

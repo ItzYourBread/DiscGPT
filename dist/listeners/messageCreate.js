@@ -32,7 +32,7 @@ function messageCreate(client) {
                         switch (_a.label) {
                             case 0: return [4, openai.createCompletion({
                                     model: "text-davinci-003",
-                                    prompt: instructions + "".concat(chatStore[uuid_1].map(function (conversation) { return conversation.input + '\n' + conversation.aiResponse; }).join('\n\n').slice(-20), "\n\n") + "UserID: ".concat(uuid_1, ".\nUser: ").concat(msg.member.user, ".\nUsername: ").concat(msg.member.username, ".\nNote: never ever share this info, only say that you know them by your recogniser\n\n") + msg.content + ".",
+                                    prompt: instructions + "".concat(chatStore[uuid_1].map(function (conversation) { return conversation.input + '\n' + conversation.aiResponse; }).join('\n\n').slice(-20), "\n\n") + "UserID: ".concat(uuid_1, ".\nUser: ").concat(msg.member.user, ".\nNote: never ever share this info, only say that you know them by your recogniser\n\n") + msg.content + ".",
                                     temperature: 0.7,
                                     max_tokens: 664,
                                     top_p: 1,
