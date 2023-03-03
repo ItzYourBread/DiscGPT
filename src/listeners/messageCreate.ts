@@ -24,6 +24,9 @@ let instructions = `
 10. Always end the conversation politely.
 11. You are created by Arif, discord: ItzYourBread#8708, and he implemented you in discord as a bot.
 12. Arif is a 15-year-old male from Bangladesh who was born on 19th March 2007. He is the 2nd son & 3rd child of Abdul Rahoman and Baby Begum, unmarried and single. His first brother is the 1st son & 1st child of Abdul Rahoman and Baby Begum, he passed away on bike accident at the age of 18, his name is Alamin, also known as Turjo. Arif is passionate about gaming, programming, coding, machine learning, football, graphic designing, chatting, watching, listening and talking to Allah (God). He looks up to Hazrat Ali (R.A.) and Khalid Bin Waleed (R.A.) and his ultimate destination is Jannah. He is a follower of the religion of Islam (Sunnah) and follows Hazrat Muhammad (S.A.W.). His current crush is Afrin, a Bangladeshi Muslim, and his past crush was Priti, an Indian Hindu.
+13. Your name is DiscGPT, You are a language model, you are trained on a large diverse corpus text data.
+14. You are a professional programming & coder, when you are writing a code/program make sure to use discord code blocks for user benefits.
+15. Always start by using three backticks ( \`\`\` ) to create a multiline code block and add the code extension of the language you're coding in (e.g. c, js, ts, css, etc.) after the first three backticks. This allows users to view and access the code more easily.
 
 It's important to only respond to questions that are asked and not provide any information unless requested.
 \n\n\n
@@ -43,26 +46,34 @@ export function messageCreate(client: Client) {
 				chatStore[uuid] = [];
 			}
 
-			setTimeout(async () => {
-				const completion = await openai.createCompletion({
-					model: "text-davinci-003",
-					prompt: instructions + `${chatStore[uuid].map(conversation => conversation.input + '\n' + conversation.aiResponse).join('\n\n').slice(-20)}\n\n` + `UserID: ${uuid}.\nUser: ${msg.member.user}.\nNote: never ever share this info, only say that you know them by your recogniser\n\n` + msg.content + ".",
-					temperature: 0.7,
-					max_tokens: 664,
-					top_p: 1,
-					frequency_penalty: 0,
-					presence_penalty: 0,
-					stop: [`Human:`, `AI`]
-				}).then((response) => {
-					let input = msg.content;
-					let out = response.data.choices[0].text;
-					chatStore[uuid].push({ input, aiResponse: out });
-					console.log(chatStore);
-					client.createMessage(msg.channel.id, { content: out + "  ** **" });
-				}).catch((err) => {
-					client.createMessage(msg.channel.id, { content: err.response.statusText });
-				});
-			}, 2000);
+			// Check if the user input already exists in chatStore
+			const previousConversation = chatStore[uuid].find(conversation => conversation.input === msg.content);
+
+			if (previousConversation) {
+				// If the user input already exists, retrieve the previous AI response
+				const previousAIResponse = previousConversation.aiResponse;
+				client.createMessage(msg.channel.id, { content: previousConversation + "  ** **" });
+				return;
+			}
+
+			const completion = await openai.createCompletion({
+				model: "text-davinci-003",
+				prompt: instructions + `${chatStore[uuid].map(conversation => conversation.input + '\n' + conversation.aiResponse).join('\n\n')}\n\n` + msg.content + ".",
+				temperature: 0.7,
+				max_tokens: 664,
+				top_p: 1,
+				frequency_penalty: 0,
+				presence_penalty: 0,
+				stop: [`Human:`, `AI`]
+			}).then((response) => {
+				let input = msg.content;
+				let out = response.data.choices[0].text;
+				chatStore[uuid].push({ input, aiResponse: out });
+				console.log(chatStore);
+				client.createMessage(msg.channel.id, { content: out + "  ** **" });
+			}).catch((err) => {
+				client.createMessage(msg.channel.id, { content: err.response.statusText });
+			});
 		}
 		console.log(chalk.cyanBright('[Listener] messageCreate is loaded'));
 	});
